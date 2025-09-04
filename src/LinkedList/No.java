@@ -1,4 +1,4 @@
-package ListaEncadeada;
+package LinkedList;
 
 public class No {
     private Object valor;

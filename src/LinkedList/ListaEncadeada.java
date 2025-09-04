@@ -1,4 +1,4 @@
-package ListaEncadeada;
+package LinkedList;
 
 public class ListaEncadeada {
     private No prim, ult;
