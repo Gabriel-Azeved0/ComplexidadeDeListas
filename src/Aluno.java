@@ -11,12 +11,19 @@ public class Aluno implements Comparable<Aluno> {
         this.matricula = m;
     }
 
-
-    @Override
-    public int compareTo(String m) {
-        //Compara o nome dos alunos
-        return this.nome.compareTo(m);
+    public String getMatricula() {
+        return matricula;
     }
 
-    @Override
+    public void setMatricula(String matricula) {
+        this.matricula = matricula;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
 }
