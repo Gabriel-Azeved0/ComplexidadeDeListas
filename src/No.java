@@ -1,5 +1,3 @@
-package LinkedList;
-
 public class No {
     private Object valor;
     private No prox;

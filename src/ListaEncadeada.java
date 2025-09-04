@@ -1,5 +1,3 @@
-package LinkedList;
-
 public class ListaEncadeada {
     private No prim, ult;
     private int quant;
