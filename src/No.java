@@ -1,9 +1,9 @@
 public class No<T>{
     private T valor;
-    private No<T> prox;
+    private No prox;
 
 
-    public No(T valor){
+    public No<T>(T valor){
         this.valor = valor;
         this.prox = null;
     }

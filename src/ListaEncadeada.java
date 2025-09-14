@@ -104,7 +104,7 @@ public class ListaEncadeada<T extends Comparable<T>> {
 
     @Override
     public String toString(){
-        No aux = this.prim;
+        No<T> aux = this.prim;
         String s = "[";
         while(aux != null){
             s += aux.getValor();

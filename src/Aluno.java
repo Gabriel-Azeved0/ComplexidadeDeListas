@@ -3,10 +3,9 @@ public class Aluno implements Comparable<Aluno> {
     private String matricula;
     private String nome;
 
-    public Aluno(){}
-
-    public Aluno(String m) {
+    public Aluno(String m, String n) {
         this.matricula = m;
+        this.nome = n;
     }
 
     public String getMatricula() {
@@ -35,5 +34,10 @@ public class Aluno implements Comparable<Aluno> {
 
         // 2º critério (desempate): nome
         return this.nome.compareToIgnoreCase(outro.nome);
+    }
+
+    @Override
+    public String toString() {
+        return matricula + " - " + nome;
     }
 }
