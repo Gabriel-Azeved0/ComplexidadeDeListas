@@ -1,26 +1,26 @@
-public class No {
-    private Object valor;
-    private No prox;
+public class No<T>{
+    private T valor;
+    private No<T> prox;
 
 
-    public No(Object valor){
+    public No(T valor){
         this.valor = valor;
         this.prox = null;
     }
 
-    public Object getValor() {
+    public T getValor() {
         return valor;
     }
 
-    public void setValor(Object valor) {
+    public void setValor(T valor) {
         this.valor = valor;
     }
 
-    public No getProx() {
-        return prox;
+    public No<T> getProx() {
+        return this.prox;
     }
 
-    public void setProx(No prox) {
-        this.prox = prox;
+    public void setProx(No<T> novoProx) {
+        this.prox = novoProx;
     }
 }

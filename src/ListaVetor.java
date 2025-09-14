@@ -6,7 +6,7 @@ public class ListaVetor<T> {
     private int n;
     private final boolean ordenada;
     private final Comparator<T> cmp;
-    "private final Comparator<? super T> cmp; - refinamento"
+    //"private final Comparator<? super T> cmp; - refinamento"
 
     public ListaVetor(boolean ordenada, Comparator<T> comparator) {
         this.ordenada = ordenada;
@@ -23,7 +23,7 @@ public class ListaVetor<T> {
         garantirCap(n + 1);
         if (!ordenada) {
             a[n++] = v;                   // O(1) amortizado
-            return;
+            return;                       // lembrar de conferir se a lista ja esta cheia, se estiver instanciar uma maior e depois adicionar um elemento ao final
         }
         int pos = posicaoInsercao(v);     // O(log n)
         shiftDireita(pos);                 // O(n)

@@ -1,36 +1,70 @@
-public class ListaEncadeada {
-    private No prim, ult;
+import java.util.Comparator;
+
+public class ListaEncadeada<T extends Comparable<T>> {
+    private No<T> prim;
+    private No<T> ult;
     private int quant;
+    private Comparator<T> ordenador;
+    private boolean isOrdenada;
 
-
-    public ListaEncadeada(){
+    public ListaEncadeada (Comparator<T> ordenador, boolean isOrdenada){
         this.prim = this.ult = null;
         this.quant = 0;
+        this.ordenador = ordenador;
+        this.isOrdenada = isOrdenada;
     }
 
 
-    public void inserirElemento(Object elem){
-        No novo = new No(elem);
-        //Se a lista está vazia
-        if (this.prim == null){
-            this.prim = novo;
-            this.ult = novo;
+    public void inserirElemento(T elem) {
+        if (contemElemento(elem)){
+            System.out.println("Esse elemento ja existe na lista.\n");
+            return;
         }
-        //Se não estiver vazia
-        else{
-            this.ult.setProx(novo);
-            this.ult = novo;
+        No<T> novo = new No<>(elem);
+        if(this.prim == null){
+            this.prim = this.ult = novo;
+            this.ult.setProx(null);
+            quant++;
         }
-        this.quant++;
+        if(isOrdenada) {
+            No<T> atual = this.prim;
+            No<T> ant = null;
+            int result_comp;
+            while (atual != null) {//condição que para ao chegar ao fim da lista
+                result_comp = ordenador.compare(atual.getValor(), novo.getValor());
+                if (result_comp > 0 && isOrdenada) {
+                    //ja passou pela posição que estaria o elemento
+                    ant.setProx(novo);
+                    novo.setProx(atual);
+                    quant++;
+                    return;
+                }
+                ant = atual;
+                atual = atual.getProx();
+            }
+        }
+        this.ult.setProx(novo);
+        this.ult = novo;
+        this.ult.setProx(null);
+        quant++;
+        System.out.println("Elemento adicionado na lista.");
     }
 
 
-    public boolean contemElemento(Object elem){
-        No aux = this.prim;
-        while (aux!=null){
-            if (aux.getValor().equals(elem))
+    public boolean contemElemento(T elem) {
+        No<T> novo = new No<>(elem);
+        No<T> atual = this.prim;
+        int result_comp;
+
+        while (atual != null) {//condição que para ao chegar ao fim da lista
+            result_comp = ordenador.compare(atual.getValor(), novo.getValor());
+            if (result_comp == 0) {//São iguais
                 return true;
-            aux = aux.getProx();
+            }
+            if (result_comp > 0 && isOrdenada) {//caso seja ordenada e ja passou pela posição que estaria o elemento
+                return false;
+            }
+            atual = atual.getProx();
         }
         return false;
     }
