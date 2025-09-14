@@ -10,6 +10,8 @@ public class Main {
         Aluno h = new Aluno("15", "Pedro");
         Aluno j = new Aluno("22", "Carlos");
         Aluno i = new Aluno("33", "Jorge");
+
+        //Testando inserir elemento
         l.inserirElemento(a);
         l.inserirElemento(b);
         l.inserirElemento(c);
@@ -17,9 +19,19 @@ public class Main {
         l.inserirElemento(j);
         l.inserirElemento(i);
         System.out.println(l);
+
         Aluno d = new Aluno("24", "Amanda");
         Aluno f = new Aluno("23", "Gabriel");
+
+        //Testando contem elemento
         System.out.println(l.contemElemento(d));
         System.out.println(l.contemElemento(f));
+
+        //Testando excluir elemento
+        System.out.println(l.excluirELemento(f));
+        System.out.println(l.excluirELemento(d));
+
+        System.out.println(l.contemElemento(d));
+        //System.out.println(l.excluirELemento());
     }
 }

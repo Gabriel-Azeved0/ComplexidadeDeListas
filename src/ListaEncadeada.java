@@ -25,6 +25,7 @@ public class ListaEncadeada<T extends Comparable<T>> {
             this.ult.setProx(null);
             quant++;
             System.out.println("Elemento adicionado na lista.");
+            return;
         }
         if(isOrdenada) {
             No<T> atual = this.prim;
@@ -32,7 +33,7 @@ public class ListaEncadeada<T extends Comparable<T>> {
             int result_comp;
             while (atual != null) {//condição que para ao chegar ao fim da lista
                 result_comp = ordenador.compare(atual.getValor(), novo.getValor());
-                if (result_comp > 0 && isOrdenada) {
+                if (result_comp > 0) {
                     if(atual == ant){//caso só tenha um elemento na lista, e precise inserir antes dele
                         this.prim = novo;
                         novo.setProx(atual);
@@ -77,37 +78,56 @@ public class ListaEncadeada<T extends Comparable<T>> {
         return false;
     }
 
+    public T pesquisar(T elem){
+        No<T> novo = new No<>(elem);
+        No<T> atual = this.prim;
+        int result_comp;
 
-    public boolean excluirELemento(Object elem){
-        No aux = this.prim;
-        No ant = null;
-        while (aux!=null){
-            //Se encontrar remove elemento
-            if (aux.getValor().equals(elem)){
-                //Se for o primeiro elemento, prim passa a apontar para o próximo
-                if(aux==this.prim){
-                    this.prim = this.prim.getProx();
-                    //Verifica se tambem é o ultimo. ou seja, é o unico elemento da lista
-                    this.ult = null;
-                }
-                //Se não é o primeiro, o anterior passa a apontar para o próximo
-                else{
-                    ant.setProx(aux.getProx());
-                    //Se ele for o ult, o ult passa a ser o ant
-                    if(aux==this.ult)
-                        this.ult = ant;
-                }
-                //Decremento na quantidade
-                this.quant--;
-                return true;
-            }
-            //Se não encontrou, ant vai para aux, e aux vai para o próximo
-            ant = aux;
-            aux = aux.getProx();
+        if(this.prim == null){
+            System.out.println("Elemento nao encontrado, lista vazia");
         }
-        //Se rodou tudo sem encontrar retorna falso
-        return false;
+
+        while (atual != null) {//condição que para ao chegar ao fim da lista
+            result_comp = ordenador.compare(atual.getValor(), novo.getValor());
+            if (result_comp == 0) {//São iguais
+                return novo.getValor();
+            }
+            if (result_comp > 0 && isOrdenada) {//caso seja ordenada e ja passou pela posição que estaria o elemento
+                return null;
+            }
+            atual = atual.getProx();
+        }
+        return null;
     }
+
+    public T excluirELemento(T elem) {
+        No<T> novo = new No<>(elem);
+        No<T> atual = this.prim;
+        No<T> ant = this.prim;
+
+        if(this.prim == null){
+            System.out.println("Elemento nao encontrado, lista vazia");
+            return null;
+        }
+
+        int result_comp;
+
+        while (atual != null) {//condição que para ao chegar ao fim da lista
+            result_comp = ordenador.compare(atual.getValor(), novo.getValor());
+            if (result_comp == 0) {//São iguais
+                ant.setProx(atual.getProx());
+                return atual.getValor();
+            }
+            if (result_comp > 0 && isOrdenada) {//caso seja ordenada e ja passou pela posição que estaria o elemento
+                return null;
+            }
+            ant = atual;
+            atual = atual.getProx();
+        }
+        return null;
+    }
+
+
 
 
     @Override
