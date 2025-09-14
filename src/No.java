@@ -1,11 +1,10 @@
 public class No<T>{
     private T valor;
-    private No prox;
+    private No<T> prox = null;
 
 
-    public No<T>(T valor){
+    public No(T valor){
         this.valor = valor;
-        this.prox = null;
     }
 
     public T getValor() {
