@@ -1,97 +1,166 @@
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Objects;
 
-public class ListaVetor<T> {
-    private T[] a;
-    private int n;
-    private final boolean ordenada;
-    private final Comparator<T> cmp;
-    //"private final Comparator<? super T> cmp; - refinamento"
+public class ListaVetor<T extends Comparable<T>> {
+    private Object[] vetor;
+    private int quant;
+    private int tamVetor = 50;
+    private final Comparator<T> ordenador;
+    private final boolean isOrdenada;
 
-    public ListaVetor(boolean ordenada, Comparator<T> comparator) {
-        this.ordenada = ordenada;
-        this.cmp = Objects.requireNonNull(comparator, "Comparator não pode ser null");
-        this.a = (T[]) new Object[16];
-        this.n = 0;
+    public ListaVetor(Comparator<T> ordenador, boolean isOrdenada) {
+        this.vetor = new Object[tamVetor];
+        this.quant = 0;
+        this.ordenador = ordenador;
+        this.isOrdenada = isOrdenada;
     }
 
-    public int tamanho() { return n; }
-    public boolean vazia() { return n == 0; }
-    public boolean isOrdenada() { return ordenada; }
-
-    public void adicionar(T v) {
-        garantirCap(n + 1);
-        if (!ordenada) {
-            a[n++] = v;                   // O(1) amortizado
-            return;                       // lembrar de conferir se a lista ja esta cheia, se estiver instanciar uma maior e depois adicionar um elemento ao final
+    public void inserirElemento(T novoValor) {
+        if (!this.contemElemento(novoValor)) {
+            if (!this.isOrdenada) {
+                if (this.tamVetor == this.quant) {
+                    this.tamVetor *= 2;
+                    Object[] novoVetor = new Object[this.tamVetor];
+                    int posiNovoVetor = 0;
+                    for (Object elemento : this.vetor) {
+                        if (elemento != null) {
+                            novoVetor[posiNovoVetor] = elemento;
+                            posiNovoVetor++;
+                        }
+                    }
+                    this.vetor = novoVetor;
+                }
+                vetor[this.quant] = novoValor;
+                this.quant++;
+            } else {
+                int posInsercao = this.buscarPosicaoInsercao(novoValor, this.quant);
+                if (posInsercao < 0) {
+                    System.out.println("Elemento ja existe na lista.");
+                    return;
+                }
+                int qtdMovidos = this.quant - posInsercao;
+                if (qtdMovidos > 0) {
+                    if (this.tamVetor == this.quant) {
+                        this.tamVetor *= 2;
+                        Object[] novoVetor = new Object[this.tamVetor];
+                        int posiNovoVetor = 0;
+                        for (Object elemento : this.vetor) {
+                            if (this.buscarPosicaoInsercao((T) elemento, this.quant) == posInsercao) {
+                                novoVetor[posiNovoVetor] = novoValor;
+                                posiNovoVetor++;
+                                this.quant++;
+                            }
+                            novoVetor[posiNovoVetor] = elemento;
+                        }
+                        this.vetor = novoVetor;
+                    }
+                }
+            }
         }
-        int pos = posicaoInsercao(v);     // O(log n)
-        shiftDireita(pos);                 // O(n)
-        a[pos] = v;
-        n++;
     }
 
-    public boolean contemElemento(T v) {
-        return ordenada ? indiceBin(v) >= 0 : indiceLinear(v) >= 0;
-    }
-
-    public T pesquisar(T v) {
-        int i = ordenada ? indiceBin(v) : indiceLinear(v);
-        return (i >= 0) ? a[i] : null;
-    }
-
-    public T remover(T v) {
-        int i = ordenada ? indiceBin(v) : indiceLinear(v);
-        if (i < 0) return null;
-        T out = a[i];
-        shiftEsquerda(i);                 // O(n) no pior caso
-        n--;
-        a[n] = null;
-        return out;
-    }
-
-    private void garantirCap(int nec) {
-        if (nec <= a.length) return;
-        int novaCap = Math.max(a.length * 2, nec);
-        T[] b = (T[]) new Object[novaCap];
-        System.arraycopy(a, 0, b, 0, n);  // O(n)
-        a = b;
-    }
-
-    private void shiftDireita(int pos) {
-        System.arraycopy(a, pos, a, pos + 1, n - pos);
-    }
-
-    private void shiftEsquerda(int pos) {
-        int qtd = n - pos - 1;
-        if (qtd > 0) System.arraycopy(a, pos + 1, a, pos, qtd);
-    }
-
-    private int indiceBin(T v) {
-        int l = 0, r = n - 1;
-        while (l <= r) {
-            int m = (l + r) >>> 1;
-            int c = cmp.compare(a[m], v);
-            if (c == 0) return m;
-            if (c < 0) l = m + 1; else r = m - 1;
+    public boolean contemElemento(T valor) {
+        if(this.pesquisar(valor) == null){
+            return false;
         }
-        return -(l) - 1;
+        return true;
     }
 
-    private int posicaoInsercao(T v) {
-        int k = indiceBin(v);
-        if (k >= 0) {
-            int pos = k + 1;
-            while (pos < n && cmp.compare(a[pos], v) == 0) pos++;
-            return pos;
+
+    public T pesquisar(T valor){
+        if(this.isOrdenada) {
+            int posiValor = this.buscarPosicaoInsercao(valor, this.quant);
+            int resultComp = this.ordenador.compare(this.obter(posiValor), valor);
+            if (resultComp == 0)
+                return this.obter(posiValor);
         }
-        return -k - 1;
+        else{
+            T atual;
+            for (int i=0; i<this.quant;i++){
+                atual = obter(i);
+                int resultComp = this.ordenador.compare(atual, valor);
+                if (resultComp == 0)
+                    return atual;
+            }
+        }
+        return null;
     }
 
-    private int indiceLinear(T v) {
-        for (int i = 0; i < n; i++) {
-            if (cmp.compare(a[i], v) == 0) return i;
+    public T remover(T valor){//ideia, trocar por null o elemento a ser excluido, copiar a lista para a nova lista ignorando o elemento null, e entao transformar a velha lista na nova
+        T valorRemovido = null;
+        if(!this.contemElemento(valor)){
+            return valorRemovido;
         }
-        return -1;
+        else {
+            if (this.isOrdenada) {//caso seja ordenada
+                int posiValor = buscarPosicaoInsercao(valor, this.quant);
+                if (posiValor < 0) {
+                    return valorRemovido;
+                }
+                valorRemovido = this.obter(posiValor);
+                this.vetor[posiValor] = null;
+            }
+            else {//caso seja desordenada
+                for (int i = 0; i < this.quant; i++) {
+                    if (this.vetor[i] == valor) {
+                        valorRemovido = obter(i);
+                        this.vetor[i] = null;
+                        break;
+                    }
+                }
+            }
+            //cria novo vetor, preenche com os valores do vetor original ignorando o elem null
+            Object[] novoVetor = new Object[this.tamVetor];
+            int posiNovoVetor = 0;
+            for (Object elemento : this.vetor) {
+                if (elemento != null) {
+                    novoVetor[posiNovoVetor] = elemento;
+                    posiNovoVetor++;
+                }
+            }
+            //atualiza quantidade e o vetor agora com o elemento removido
+            this.quant--;
+            this.vetor = novoVetor;
+        }
+        return valorRemovido;
     }
+
+    private int buscarPosicaoInsercao(T valor, int fim) {
+        int esquerda = 0;
+        int direita = fim;
+        int result_comp;
+        T atual;
+        while (esquerda < direita) {
+            int meio = esquerda + ((direita - esquerda) >>> 1);
+            atual = obter(meio);
+            result_comp = this.ordenador.compare(atual, valor);
+            if (result_comp < 0) {
+                esquerda = meio + 1;   // atual < valor -> procurar à direita
+            } else {
+                direita = meio;        // atual >= valor -> estreita à esquerda
+            }
+        }
+        return esquerda; // ponto de inserção
+    }
+
+    private T obter(int i) {
+        //preciso do cast pois o vetor[i] retorna um object, e meu comparable usa tipo T generico
+        return (T) this.vetor[i];
+    }
+
+    @Override
+    public String toString(){
+        StringBuilder s = new StringBuilder("[");
+        for(int i=0; i<this.quant; i++){
+            s.append(this.vetor[i].toString());
+            s.append(",");
+        }
+        return (s+"]");
+    }
+
+    public int getQuant() {
+        return this.quant;
+    }
+
 }
