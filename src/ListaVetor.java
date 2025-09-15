@@ -24,10 +24,8 @@ public class ListaVetor<T extends Comparable<T>> {
                     Object[] novoVetor = new Object[this.tamVetor];
                     int posiNovoVetor = 0;
                     for (Object elemento : this.vetor) {
-                        if (elemento != null) {
-                            novoVetor[posiNovoVetor] = elemento;
-                            posiNovoVetor++;
-                        }
+                        novoVetor[posiNovoVetor] = elemento;
+                        posiNovoVetor++;
                     }
                     this.vetor = novoVetor;
                 }
@@ -35,10 +33,6 @@ public class ListaVetor<T extends Comparable<T>> {
                 this.quant++;
             } else {
                 int posInsercao = this.buscarPosicaoInsercao(novoValor, this.quant);
-                if (posInsercao < 0) {
-                    System.out.println("Elemento ja existe na lista.");
-                    return;
-                }
                 int qtdMovidos = this.quant - posInsercao;
                 if (qtdMovidos > 0) {
                     if (this.tamVetor == this.quant) {
@@ -95,9 +89,6 @@ public class ListaVetor<T extends Comparable<T>> {
         else {
             if (this.isOrdenada) {//caso seja ordenada
                 int posiValor = buscarPosicaoInsercao(valor, this.quant);
-                if (posiValor < 0) {
-                    return valorRemovido;
-                }
                 valorRemovido = this.obter(posiValor);
                 this.vetor[posiValor] = null;
             }
@@ -158,9 +149,4 @@ public class ListaVetor<T extends Comparable<T>> {
         }
         return (s+"]");
     }
-
-    public int getQuant() {
-        return this.quant;
-    }
-
 }
