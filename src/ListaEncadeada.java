@@ -128,8 +128,6 @@ public class ListaEncadeada<T extends Comparable<T>> {
     }
 
 
-
-
     @Override
     public String toString(){
         No<T> aux = this.prim;

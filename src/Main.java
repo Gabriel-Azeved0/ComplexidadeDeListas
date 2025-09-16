@@ -1,7 +1,9 @@
 import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main {
@@ -24,10 +26,10 @@ public class Main {
         // Comparator<Aluno> comparador = new ComparadorAlunoPorNome();
 
         // Escolha UMA estrutura e comente a outra:
-        ListaVetor<Aluno> ds = new ListaVetor<>(comparador, false);
+        ListaVetor<Aluno> ds = new ListaVetor<>(comparador, true);
         // ListaEncadeada<Aluno> ds = new ListaEncadeada<>(comparador, /*ordenada=*/true);
 
-        String label = "ListaVetor,ordenada=false";
+        String label = "ListaVetor,ordenada=true";
         // String label = "ListaEncadeada,ordenada=true";
         // =============================================
 
@@ -112,3 +114,4 @@ public class Main {
     private static double nanosToMs(long nanos) { return nanos / 1_000_000.0; }
     private static String fmt(double v) { return String.format(java.util.Locale.US, "%.3f", v); }
 }
+
