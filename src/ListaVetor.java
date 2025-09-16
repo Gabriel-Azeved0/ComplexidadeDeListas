@@ -87,7 +87,7 @@ public class ListaVetor<T extends Comparable<T>> {
         return null;
     }
 
-    public T remover(T valor){//ideia, trocar por null o elemento a ser excluido, copiar a lista para a nova lista ignorando o elemento null, e entao transformar a velha lista na nova
+    public T excluirElemento(T valor){//ideia, trocar por null o elemento a ser excluido, copiar a lista para a nova lista ignorando o elemento null, e entao transformar a velha lista na nova
         T valorRemovido = null;
         if(!this.contemElemento(valor)){
             return valorRemovido;

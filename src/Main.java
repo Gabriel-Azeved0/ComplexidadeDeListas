@@ -1,66 +1,114 @@
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+import java.io.BufferedReader;
+import java.io.FileWriter;
+import java.io.InputStreamReader;
+import java.util.Comparator;
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class Main {
-    public static void main(String[] args) {
-        ComparadorAlunoPorMatricula comparador = new ComparadorAlunoPorMatricula();
-        ListaVetor<Aluno> v = new ListaVetor<Aluno>(comparador, false);
-        ListaEncadeada<Aluno> l = new ListaEncadeada<Aluno>(comparador, true);
-        Aluno a = new Aluno("24", "Gabriel");
-        Aluno b = new Aluno("22", "Amanda");
-        Aluno c = new Aluno("1", "Hiago");
-        Aluno h = new Aluno("15", "Gabriel");
-        Aluno j = new Aluno("22", "Carlos");
-        Aluno i = new Aluno("33", "Jorge");
+    public static void main(String[] args) throws Exception {
+        // === ler caminho (stdin ou arg) ===
+        String caminho;
+        if (args.length >= 1) {
+            caminho = args[0];
+        } else {
+            System.out.println("Digite o caminho do arquivo para o teste:");
+            System.out.print("> ");
+            BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+            caminho = in.readLine();
+        }
+        if (caminho == null) return;
+        caminho = caminho.trim(); // evita espaços ao copiar/colar
 
-        //Testando inserir elemento lista encadeada
-        v.inserirElemento(a);
-        System.out.println(v);
-        v.inserirElemento(b);
-        System.out.println(v);
-        v.inserirElemento(c);
-        System.out.println(v);
-        v.inserirElemento(h);
-        System.out.println(v);
-        v.inserirElemento(j);
-        System.out.println(v);
-        v.inserirElemento(i);
-        System.out.println(v);
+        // =============== EDITAR AQUI =================
+        Comparator<Aluno> comparador = new ComparadorAlunoPorMatricula();
+        // Comparator<Aluno> comparador = new ComparadorAlunoPorNome();
 
-        System.out.println(v.contemElemento(a));
-        System.out.println(v.contemElemento(j));
-        System.out.println(v.pesquisar(j));
-        System.out.println(v.getQuant());
-        System.out.println(v.remover(a));
-        System.out.println(v.remover(c));
-        System.out.println(v.getQuant());
-        System.out.println(v);
+        // Escolha UMA estrutura e comente a outra:
+        ListaVetor<Aluno> ds = new ListaVetor<>(comparador, false);
+        // ListaEncadeada<Aluno> ds = new ListaEncadeada<>(comparador, /*ordenada=*/true);
 
-        /*
-        //Testando inserir elemento lista encadeada
-        l.inserirElemento(a);
-        l.inserirElemento(b);
-        l.inserirElemento(c);
-        l.inserirElemento(h);
-        l.inserirElemento(j);
-        l.inserirElemento(i);
-        System.out.println(l);
+        String label = "ListaVetor,ordenada=false";
+        // String label = "ListaEncadeada,ordenada=true";
+        // =============================================
 
+        final Aluno[] primeiro = new Aluno[1]; // p/ buscar/contém (existente)
+        final Aluno[] segundo  = new Aluno[1]; // p/ remover (existente)
+        final Aluno inexistente = new Aluno("__NAO_EXISTE__", "Nao Existe");
 
+        System.out.println("Abrindo: " + caminho);
+        System.out.println("Inserindo (isso pode levar um tempo)...");
+        System.out.flush();
 
-        Aluno d = new Aluno("24", "Amanda");
-        Aluno f = new Aluno("23", "Gabriel");
+        // 1) adicionar (inserir todos) + progresso
+        final AtomicInteger total = new AtomicInteger(0);
+        long t0 = System.nanoTime();
+        LeitorArquivos.consumir(caminho, a -> {
+            if (primeiro[0] == null)      primeiro[0] = a;
+            else if (segundo[0] == null)  segundo[0]  = a;
 
-        //Testando contem elemento
-        System.out.println(l.contemElemento(d));
-        System.out.println(l.contemElemento(f));
+            ds.inserirElemento(a);
 
-        //Testando excluir elemento
-        System.out.println(l.excluirELemento(f));
-        System.out.println(l.excluirELemento(d));
+            int c = total.incrementAndGet();
+            if ((c % 100_000) == 0) {
+                System.out.println("  inseridos: " + c);
+                System.out.flush();
+            }
+        });
+        long t1 = System.nanoTime();
+        double msAdicionar = nanosToMs(t1 - t0);
+        System.out.printf("adicionar (%,d itens): %.3f ms%n", total.get(), msAdicionar);
 
-        System.out.println(l.contemElemento(d));
-        //System.out.println(l.excluirELemento());
+        if (segundo[0] == null) segundo[0] = primeiro[0];
 
-        */
+        // 6) contem (existente)
+        double msContemExistente = medirMs(() -> ds.contemElemento(primeiro[0]));
+        System.out.printf("contem (existente): %.3f ms%n", msContemExistente);
+
+        // 7) contem (inexistente)
+        double msContemInexistente = medirMs(() -> ds.contemElemento(inexistente));
+        System.out.printf("contem (inexistente): %.3f ms%n", msContemInexistente);
+
+        // 4) pesquisar (existente)
+        double msPesquisarExistente = medirMs(() -> ds.pesquisar(primeiro[0]));
+        System.out.printf("pesquisar (existente): %.3f ms%n", msPesquisarExistente);
+
+        // 5) pesquisar (inexistente)
+        double msPesquisarInexistente = medirMs(() -> ds.pesquisar(inexistente));
+        System.out.printf("pesquisar (inexistente): %.3f ms%n", msPesquisarInexistente);
+
+        // 2) remover (existente)
+        double msRemoverExistente = medirMs(() -> ds.excluirElemento(segundo[0]));
+        System.out.printf("remover (existente): %.3f ms%n", msRemoverExistente);
+
+        // 3) remover (inexistente)
+        double msRemoverInexistente = medirMs(() -> ds.excluirElemento(inexistente));
+        System.out.printf("remover (inexistente): %.3f ms%n", msRemoverInexistente);
+
+        // CSV minimalista (1 linha por execução, sem cabeçalho)
+        try (FileWriter fw = new FileWriter("tempos.csv", true)) {
+            fw.write(String.join(",",
+                    label,
+                    caminho,
+                    Integer.toString(total.get()),
+                    fmt(msAdicionar),
+                    fmt(msRemoverExistente),
+                    fmt(msRemoverInexistente),
+                    fmt(msPesquisarExistente),
+                    fmt(msPesquisarInexistente),
+                    fmt(msContemExistente),
+                    fmt(msContemInexistente)
+            ));
+            fw.write("\n");
+        }
     }
+
+    // -------- utils ----------
+    private static double medirMs(Runnable r) {
+        long t0 = System.nanoTime();
+        r.run();
+        long t1 = System.nanoTime();
+        return nanosToMs(t1 - t0);
+    }
+    private static double nanosToMs(long nanos) { return nanos / 1_000_000.0; }
+    private static String fmt(double v) { return String.format(java.util.Locale.US, "%.3f", v); }
 }

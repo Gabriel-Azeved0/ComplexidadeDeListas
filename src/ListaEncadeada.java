@@ -100,7 +100,7 @@ public class ListaEncadeada<T extends Comparable<T>> {
         return null;
     }
 
-    public T excluirELemento(T elem) {
+    public T excluirElemento(T elem) {
         No<T> novo = new No<>(elem);
         No<T> atual = this.prim;
         No<T> ant = this.prim;
