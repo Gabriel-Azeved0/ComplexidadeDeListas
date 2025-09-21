@@ -1,3 +1,5 @@
+package parte1;
+
 public class No<T>{
     private T valor;
     private No<T> prox = null;

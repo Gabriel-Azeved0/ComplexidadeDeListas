@@ -1,6 +1,7 @@
+package parte4;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -18,7 +19,7 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         // Passar caminho do arquivo txt
-        String caminho = "C:\\Users\\bield\\IdeaProjects\\ComplexidadeDeListas\\alunosOrdenados.txt";
+        String caminho = "C:\\Users\\bield\\IdeaProjects\\ComplexidadeDeListas\\alunosBalanceados.txt";
 
         // Leitura de linha a linha do txt armazenando numa lista Alunos
         List<Aluno> base = new ArrayList<>();

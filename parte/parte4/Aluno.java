@@ -1,3 +1,5 @@
+package parte4;
+
 public class Aluno implements Comparable<Aluno> {
 
     private String matricula;

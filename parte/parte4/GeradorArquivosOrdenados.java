@@ -1,13 +1,14 @@
+package parte4;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Random;
-import java.util.ArrayList;
 
-public class GeradorArquivosBalanceados {
+public class GeradorArquivosOrdenados{
     private static final int NUM_REGISTROS = 1000000; // Quantidade de registros a serem gerados
-    private static final String NOME_ARQUIVO = "alunosBalanceados.txt";
+    private static final String NOME_ARQUIVO = "alunosOrdenados.txt";
     
     private static final String[] PRENOMES = {
         "Ana", "Bruno", "Carlos", "Daniela", "Eduardo", "Fernanda", "Gabriel", "Helena", "Isabela", "João",
@@ -42,19 +43,15 @@ public class GeradorArquivosBalanceados {
     
     private static void gerarArquivo() {
         Random random = new Random();
-        ArrayList<Integer> ids = new ArrayList<>();
-        gerarIdentificadoresBalanceados(ids, 1, NUM_REGISTROS);
         
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(NOME_ARQUIVO, StandardCharsets.UTF_8))) {
             writer.write(NUM_REGISTROS + "\n");
             
-            for (int i = 0; i < NUM_REGISTROS; i++) {
-                int id = ids.get(i);
+            for (int i = 1; i <= NUM_REGISTROS; i++) {
                 String nome = gerarNomeAleatorio(random);
-                writer.write(id + ";" + nome + ";" + "\n");
-                
-                if ((i + 1) % 1_000_000 == 0) {
-                    System.out.println((i + 1) + " registros gerados...");
+                writer.write(i + ";" + nome + ";" + "\n");
+                if (i % 1_000_000 == 0) {
+                    System.out.println(i + " registros gerados...");
                 }
             }
             
@@ -62,14 +59,6 @@ public class GeradorArquivosBalanceados {
         } catch (IOException e) {
             System.err.println("Erro ao escrever no arquivo: " + e.getMessage());
         }
-    }
-    
-    private static void gerarIdentificadoresBalanceados(ArrayList<Integer> ids, int inicio, int fim) {
-        if (inicio > fim) return;
-        int meio = (inicio + fim) / 2;
-        ids.add(meio);
-        gerarIdentificadoresBalanceados(ids, inicio, meio - 1);
-        gerarIdentificadoresBalanceados(ids, meio + 1, fim);
     }
     
     private static String gerarNomeAleatorio(Random random) {
